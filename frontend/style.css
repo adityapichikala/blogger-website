@@ -1,0 +1,107 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    display: grid;
+    grid-template-columns: 250px 1fr; /* Sidebar and Main content */
+    gap: 20px;
+}
+
+header {
+    grid-column: 1 / 3;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.sidebar h2, .sidebar h3 {
+    margin-top: 0;
+}
+
+.sidebar div {
+    margin-bottom: 10px;
+}
+
+.sidebar label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.main {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.column {
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+
+.column label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.column input[type="range"] {
+    width: 100%;
+}
+
+.column span {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.recommendations {
+    grid-column: 1 / 3;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.metric-column {
+    text-align: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.metric {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.plots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.plots canvas {
+    width: 100% !important;
+    height: auto !important;
+    border: 1px solid #f0f0f0;
+    border-radius: 5px;
+}
+
+.detailed-recommendations {
+    grid-column: 1 / 3;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+footer {
+    grid-column: 1 / 3;
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
+}

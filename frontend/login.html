@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | My Blog</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <main class="max-w-md mx-auto p-6 mt-10 bg-white rounded-xl shadow-lg">
+    <h1 class="text-3xl font-bold text-center mb-6">Welcome to My Blog</h1>
+    
+    <!-- Tabs -->
+    <div class="flex justify-center mb-6">
+      <button onclick="showTab('login')" id="loginTab" class="px-4 py-2 font-semibold text-blue-600 border-b-2 border-blue-600">Login</button>
+      <button onclick="showTab('signup')" id="signupTab" class="px-4 py-2 font-semibold text-gray-500">Sign Up</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="grid gap-4">
+      <input type="email" id="loginEmail" placeholder="Email" class="p-2 border rounded" required />
+      <input type="password" id="loginPassword" placeholder="Password" class="p-2 border rounded" required />
+      <button type="button" onclick="login()" class="bg-blue-600 text-white px-4 py-2 rounded">Login</button>
+    </form>
+
+    <!-- Signup Form -->
+    <form id="signupForm" class="grid gap-4 hidden">
+      <input type="text" id="signupName" placeholder="Name" class="p-2 border rounded" required />
+      <input type="email" id="signupEmail" placeholder="Email" class="p-2 border rounded" required />
+      <input type="password" id="signupPassword" placeholder="Password" class="p-2 border rounded" required />
+      <button type="button" onclick="signup()" class="bg-green-600 text-white px-4 py-2 rounded">Sign Up</button>
+    </form>
+  </main>
+
+  <script>
+    function showTab(tab) {
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+      const loginTab = document.getElementById('loginTab');
+      const signupTab = document.getElementById('signupTab');
+
+      if (tab === 'login') {
+        loginForm.classList.remove('hidden');
+        signupForm.classList.add('hidden');
+        loginTab.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+        signupTab.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+      } else {
+        loginForm.classList.add('hidden');
+        signupForm.classList.remove('hidden');
+        signupTab.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+        loginTab.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+      }
+    }
+
+    async function login() {
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      if (!email || !password) {
+        alert("Please enter email and password");
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:5000/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert("Login successful!");
+          localStorage.setItem('user', JSON.stringify(data.user));
+          window.location.href = "main.html";
+        } else {
+          alert(data.message || "Login failed");
+        }
+      } catch (error) {
+        console.error("Error during login:", error);
+        alert("Something went wrong");
+      }
+    }
+
+    async function signup() {
+      const name = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+
+      if (!name || !email || !password) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:5000/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert("Signup successful! You can now log in.");
+          showTab('login');
+        } else {
+          alert(data.message || "Signup failed");
+        }
+      } catch (error) {
+        console.error("Error during signup:", error);
+        alert("Something went wrong");
+      }
+    }
+  </script>
+</body>
+</html>

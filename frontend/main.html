@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Blog</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Top Bar with Logout -->
+  <nav class="flex justify-between items-center p-4 bg-white shadow">
+    <h1 class="text-2xl font-bold">📝 My Blog</h1>
+    <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Logout</button>
+  </nav>
+
+  <main class="max-w-4xl mx-auto p-6">
+    <!-- Post Form -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Write a new post</h2>
+      <form class="grid gap-4" id="postForm">
+        <input type="text" id="titleInput" placeholder="Title" class="p-2 border rounded" required />
+        <textarea id="contentInput" placeholder="What's on your mind?" rows="4" class="p-2 border rounded" required></textarea>
+        <input type="text" id="authorInput" placeholder="Your Name" class="p-2 border rounded" required />
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded w-fit">Publish</button>
+      </form>
+    </section>
+
+    <!-- Search Bar -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Search Posts</h2>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Search by title, content, or author..."
+        class="w-full p-2 border rounded"
+        oninput="filterPosts()"
+      />
+    </section>
+
+    <!-- Posts Section -->
+    <section>
+      <h2 class="text-2xl font-semibold mb-4">Recent Posts</h2>
+      <div id="postsContainer" class="grid gap-6"></div>
+    </section>
+  </main>
+
+  <script>
+    const apiBase = "http://localhost:5000"; // Backend base URL
+
+    async function fetchPosts(query = "") {
+      try {
+        const res = await fetch(`${apiBase}/posts?search=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        renderPosts(data);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    }
+
+    async function publishPost(event) {
+      event.preventDefault(); // Prevent form reload
+
+      const title = document.getElementById("titleInput").value;
+      const content = document.getElementById("contentInput").value;
+      const author = document.getElementById("authorInput").value;
+
+      if (!title || !content || !author) {
+        alert("Please fill all fields!");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${apiBase}/posts`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, content, author }),
+        });
+
+        if (res.ok) {
+          document.getElementById("postForm").reset();
+          fetchPosts(); // Refresh post list
+        } else {
+          alert("Failed to publish post.");
+        }
+      } catch (error) {
+        console.error("Error publishing post:", error);
+      }
+    }
+
+    function renderPosts(posts) {
+      const container = document.getElementById("postsContainer");
+      container.innerHTML = "";
+
+      if (posts.length === 0) {
+        container.innerHTML = "<p>No posts found.</p>";
+        return;
+      }
+
+      posts.forEach(post => {
+        const card = document.createElement("div");
+        card.className = "bg-white p-4 rounded-xl shadow";
+
+        card.innerHTML = `
+          <h3 class="text-xl font-bold mb-2">${post.title}</h3>
+          <p class="text-sm text-gray-500 mb-2">By ${post.author} on ${post.date}</p>
+          <p>${post.content}</p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterPosts() {
+      const term = document.getElementById("searchInput").value;
+      fetchPosts(term);
+    }
+
+    function logout() {
+      window.location.href = "login.html";
+    }
+
+    // Initial load
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("postForm").addEventListener("submit", publishPost);
+      fetchPosts();
+    });
+  </script>
+</body>
+</html>
