@@ -17,8 +17,6 @@ mongoose.connect('mongodb://localhost:27017/myblogs', {
   useUnifiedTopology: true,
 }).then(() => console.log('MongoDB connected'))
   .catch((err) => console.log(err));
-
-// ✅ Use /api for auth routes
 app.use('/api', authRoutes);
 
 // Posts routes
